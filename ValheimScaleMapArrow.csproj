@@ -1,0 +1,102 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Product>ScaleMapArrow</Product>
+    <Description>Valheim that allows scaling the size of the local player arrow on both the minimap and large map</Description>
+    <Version>1.2.0</Version>
+    <Authors>Aidin</Authors>
+    <RepositoryUrl>https://github.com/aidinabedi/ValheimScaleMapArrow</RepositoryUrl>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>disable</Nullable>
+    <DebugType>none</DebugType>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony20">
+      <HintPath>lib\0Harmony20.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="assembly_guiutils">
+      <HintPath>lib\assembly_guiutils.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="assembly_valheim">
+      <HintPath>lib\assembly_valheim.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>lib\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>lib\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>lib\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>lib\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="README.md">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Remove="*.zip" />
+  </ItemGroup>
+  <Target Name="Manifest" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <ManifestJsonFile>$(OutputPath)manifest.json</ManifestJsonFile>
+      <ManifestCSharpFile>$(IntermediateOutputPath)Manifest.cs</ManifestCSharpFile>
+    </PropertyGroup>
+    <Message Importance="high" Text="Generating $(ManifestJsonFile)" />
+    <WriteLinesToFile
+      File="$(ManifestJsonFile)"
+      Overwrite="true"
+      Lines="
+{
+  &quot;name&quot;: &quot;$(Product)&quot;,
+  &quot;author&quot;: &quot;$(Authors)&quot;,
+  &quot;description&quot;: &quot;$(Description)&quot;,
+  &quot;version_number&quot;: &quot;$(Version)&quot;,
+  &quot;dependencies&quot;: [
+    &quot;denikson-BepInExPack_Valheim-5.4.2202&quot;
+  ],
+  &quot;website_url&quot;: &quot;$(RepositoryUrl)&quot;
+}" />
+    <Message Importance="high" Text="Generating $(ManifestCSharpFile)" />
+    <WriteLinesToFile
+      File="$(ManifestCSharpFile)"
+      Overwrite="true"
+      Lines="
+internal static class Manifest
+{
+    public const string ProjectName = &quot;$(ProjectName)&quot;%3B
+    public const string Product = &quot;$(Product)&quot;%3B
+    public const string Description = &quot;$(Description)&quot;%3B
+    public const string Version = &quot;$(Version)&quot;%3B
+    public const string Authors = &quot;$(Authors)&quot;%3B
+}" />
+    <ItemGroup>
+      <Compile Include="$(ManifestCSharpFile)" />
+    </ItemGroup>
+  </Target>
+  <PropertyGroup>
+    <OutputZipFile>$(MSBuildProjectName).zip</OutputZipFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <UpToDateCheckOutput Include="$(OutputZipFile)" />
+  </ItemGroup>
+  <Target Name="ZipOutputPath" AfterTargets="Build">
+    <ZipDirectory SourceDirectory="$(OutputPath)" DestinationFile="$(OutputZipFile)" Overwrite="True" />
+  </Target>
+</Project>
